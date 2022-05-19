@@ -4,8 +4,8 @@ from types import MethodType
 
 
 def greeter(func):
-    def inner(*args):
-        result = func(*args)
+    def inner(*args, **kwargs):
+        result = func(*args, **kwargs)
         names = result.split()
         return 'Aloha ' + ' '.join([name[0].upper() + name[1:].lower() for name in names])
     return inner
@@ -21,8 +21,8 @@ def calc_sum(number):
 
 
 def sums_of_str_elements_are_equal(func):
-    def inner(*args):
-        result = func(*args)
+    def inner(*args, **kwargs):
+        result = func(*args, **kwargs)
         (a, b) = result.split()
         (sum_a, sum_b) = (calc_sum(a), calc_sum(b))
 
@@ -34,8 +34,8 @@ def sums_of_str_elements_are_equal(func):
 
 def format_output(*required_keys):
     def decorator(func):
-        def inner(*args):
-            func_result = func(*args)
+        def inner(*args, **kwargs):
+            func_result = func(*args, **kwargs)
             result = defaultdict(str)
 
             aggregated_value = {}
@@ -60,12 +60,10 @@ def format_output(*required_keys):
 
 def add_method_to_instance(klass):
     def decorator(func):
-        def class_func(self, *args):
-            return func(*args)
-        setattr(klass, func.__name__, MethodType(class_func, klass))
+        def class_func(self, *args, **kwargs):
+            return func(*args, **kwargs)
 
-        def inner(*args):
-            return func(*args)
-        return inner
+        setattr(klass, func.__name__, MethodType(class_func, klass))
+        return func
     return decorator
 
